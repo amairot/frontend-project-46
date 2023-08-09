@@ -1,3 +1,4 @@
+/* eslint no-underscore-dangle: 0 */
 import { fileURLToPath } from 'url';
 import path from 'node:path';
 import gendiff from '../bin/gendiff.js';
