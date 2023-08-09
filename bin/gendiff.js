@@ -1,16 +1,17 @@
 #!/usr/bin/env node
 import * as fs from 'node:fs';
+import path from 'node:path';
 import _ from 'lodash';
-import parseJSON from './parse-json.js';
+import parseFile from './parsers.js';
 import makePath from './relative-path-into-absolute.js';
 
-export default (file1path, file2path) => {
-  const filepath1 = makePath(file1path);
-  const filepath2 = makePath(file2path);
+export default (file1, file2) => {
+  const filepath1 = makePath(file1);
+  const filepath2 = makePath(file2);
   const file1RawData = fs.readFileSync(filepath1);
   const file2RawData = fs.readFileSync(filepath2);
-  const file1Parsed = parseJSON(file1RawData);
-  const file2Parsed = parseJSON(file2RawData);
+  const file1Parsed = parseFile(file1RawData, path.extname(file1));
+  const file2Parsed = parseFile(file2RawData, path.extname(file2));
   const file1Keys = Object.keys(file1Parsed);
   const file2Keys = Object.keys(file2Parsed);
   const differentKeys = _.difference(file2Keys, file1Keys);
