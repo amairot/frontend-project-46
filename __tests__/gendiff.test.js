@@ -1,4 +1,3 @@
-
 import gendiff from '../bin/gendiff.js';
 
 const idealResult = `{
@@ -10,12 +9,9 @@ const idealResult = `{
   + verbose: true
 }`;
 
-const filepath1 = '../__fixtures__/file1.json';
-const filepath2 = '../__fixtures__/file2.json';
-
 const fullFilepath1 = '/mnt/f/prj/frontend-project-46/src/file1.json';
 const fullFilepath2 = '/mnt/f/prj/frontend-project-46/src/file2.json';
 
-  test('check result', () => {
-    expect(gendiff(fullFilepath1, fullFilepath2)).toBe(idealResult);
-  });
+test('check result', () => {
+  expect(gendiff(fullFilepath1, fullFilepath2)).toBe(idealResult);
+});
