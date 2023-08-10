@@ -1,9 +1,8 @@
 import _ from 'lodash';
 
-const isObject = (value) => (typeof value === 'object') && (value !== null) && (!Array.isArray(value));
 const parseObject = (obj) => {
     const objEntries = Object.entries(obj);
-    return objEntries.map(([key, value]) => isObject(value) ? [key, parseObject(value)] : [key, value]);
+    return objEntries.map(([key, value]) => _.isPlainObject(value) ? {key, children: parseObject(value), status: 'unchanged'} : {key, value, status: 'unchanged'});
 };
 
 const findDiff = (object1, object2) => {
@@ -14,40 +13,37 @@ const findDiff = (object1, object2) => {
     const result = allKeys.reduce((acc, key) => {
       const value1 = object1[key];
       const value2 = object2[key];
-      if (isObject(value1) && isObject(value2)) {
-        acc.push([key, findDiff(value1, value2), 0]);
+      if (_.isPlainObject(value1) && _.isPlainObject(value2)) {
+        acc.push({ key, children: findDiff(value1, value2), status: 'unchanged' });
         return acc;
       }
-      if (isObject(value1) && !(value2 === undefined)) {
-        acc.push([key, parseObject(value1), 1]);
-        acc.push([key, value2, 2]);
+      if (_.isPlainObject(value1) && !(value2 === undefined)) {
+        acc.push({ key, value: value2, status: 'updated', previousValue: parseObject(value1)});
         return acc;
       }
-      if (isObject(value1)) {
-        acc.push([key, parseObject(value1), 1]);
+      if (_.isPlainObject(value1)) {
+        acc.push({ key, value: parseObject(value1), status: 'removed'});
         return acc;
       }
-      if (isObject(value2) && !(value1 === undefined)) {
-        acc.push([key, value1, 1]);
-        acc.push([key, parseObject(value2), 2]);
+      if (_.isPlainObject(value2) && !(value1 === undefined)) {
+        acc.push({ key, value: parseObject(value2), status: 'updated', previousValue: value1});
         return acc;
       }
-      if (isObject(value2)) {
-        acc.push([key, parseObject(value2), 2]);
+      if (_.isPlainObject(value2)) {
+        acc.push({ key, value: parseObject(value2), status: 'added' });
         return acc;
       }
       if (value1 === value2) {
-        acc.push([key, value1, 0]);
+        acc.push({ key, value: value1, status: 'unchanged' });
         return acc;
       } if (value1 === undefined) {
-        acc.push([key, value2, 2]);
+        acc.push({ key, value: value2, status: 'added' });
         return acc;
       } if (value2 === undefined) {
-        acc.push([key, value1, 1]);
+        acc.push({ key, value: value1, status: 'removed' });
         return acc;
       } if (value1 !== value2) {
-        acc.push([key, value1, 1]);
-        acc.push([key, value2, 2]);
+        acc.push({ key, value: value2, status: 'updated', previousValue: value1 });
         return acc;
       }
       return acc;

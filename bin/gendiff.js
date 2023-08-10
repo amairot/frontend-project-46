@@ -15,6 +15,7 @@ export default (file1, file2, type) => {
   const file1Parsed = parseFile(file1RawData, path.extname(file1));
   const file2Parsed = parseFile(file2RawData, path.extname(file2));
   const result = findDiff(file1Parsed, file2Parsed);
+  console.log(type);
   const resultString = style(result, type);
   console.log(resultString);
   return resultString;
