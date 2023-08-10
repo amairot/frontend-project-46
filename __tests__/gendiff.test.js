@@ -12,7 +12,19 @@ const idealResultYaml = `{
   + verbose: true
 }`;
 
-const idealResultJson = `{
+const idealResultPlain = `Property 'common.follow' was added with value: false
+Property 'common.setting2' was removed
+Property 'common.setting3' was updated. From true to null
+Property 'common.setting4' was added with value: 'blah blah'
+Property 'common.setting5' was added with value: [complex value]
+Property 'common.setting6.doge.wow' was updated. From '' to 'so much'
+Property 'common.setting6.ops' was added with value: 'vops'
+Property 'group1.baz' was updated. From 'bas' to 'bars'
+Property 'group1.nest' was updated. From [complex value] to 'str'
+Property 'group2' was removed
+Property 'group3' was added with value: [complex value]`;
+
+const idealResultStylish = `{
     common: {
       + follow: false
         setting1: Value 1
@@ -66,10 +78,15 @@ const fileJson2 = getFixturePath('file4.json');
 const fileYaml1 = getFixturePath('file1.yaml');
 const fileYaml2 = getFixturePath('file2.yaml');
 
-test('check json to json', () => {
-  expect(gendiff(fileJson1, fileJson2)).toBe(idealResultJson);
+test('check json to stylish', () => {
+  expect(gendiff(fileJson1, fileJson2, 'stylish')).toBe(idealResultStylish);
 });
 
+test('check json to plain', () => {
+  expect(gendiff(fileJson1, fileJson2, 'plain')).toBe(idealResultPlain);
+});
+
+
 test('check yaml to json', () => {
-  expect(gendiff(fileYaml1, fileYaml2)).toBe(idealResultYaml);
+  expect(gendiff(fileYaml1, fileYaml2, 'stylish')).toBe(idealResultYaml);
 });
