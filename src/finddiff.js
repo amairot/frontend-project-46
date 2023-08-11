@@ -14,37 +14,28 @@ const findDiff = (object1, object2) => {
       const value1 = object1[key];
       const value2 = object2[key];
       if (_.isPlainObject(value1) && _.isPlainObject(value2)) {
-        acc.push({ key, children: findDiff(value1, value2), status: 'unchanged' });
-        return acc;
+        return [...acc, { key, children: findDiff(value1, value2), status: 'unchanged' }];
       }
       if (_.isPlainObject(value1) && !(value2 === undefined)) {
-        acc.push({ key, value: value2, status: 'updated', previousValue: parseObject(value1)});
-        return acc;
+        return [...acc, { key, value: value2, status: 'updated', previousValue: parseObject(value1)}];
       }
       if (_.isPlainObject(value1)) {
-        acc.push({ key, value: parseObject(value1), status: 'removed'});
-        return acc;
+        return [...acc, { key, value: parseObject(value1), status: 'removed'}];
       }
       if (_.isPlainObject(value2) && !(value1 === undefined)) {
-        acc.push({ key, value: parseObject(value2), status: 'updated', previousValue: value1});
-        return acc;
+        return [...acc, { key, value: parseObject(value2), status: 'updated', previousValue: value1}];
       }
       if (_.isPlainObject(value2)) {
-        acc.push({ key, value: parseObject(value2), status: 'added' });
-        return acc;
+        return [...acc, { key, value: parseObject(value2), status: 'added' }];
       }
       if (value1 === value2) {
-        acc.push({ key, value: value1, status: 'unchanged' });
-        return acc;
+        return [...acc, { key, value: value1, status: 'unchanged' }];
       } if (value1 === undefined) {
-        acc.push({ key, value: value2, status: 'added' });
-        return acc;
+        return [...acc, { key, value: value2, status: 'added' }];
       } if (value2 === undefined) {
-        acc.push({ key, value: value1, status: 'removed' });
-        return acc;
+        return [...acc, { key, value: value1, status: 'removed' }];
       } if (value1 !== value2) {
-        acc.push({ key, value: value2, status: 'updated', previousValue: value1 });
-        return acc;
+        return [...acc, { key, value: value2, status: 'updated', previousValue: value1 }];
       }
       return acc;
     }, []);
