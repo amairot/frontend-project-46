@@ -1,39 +1,37 @@
 const style = (data, property) => {
-    let lastProperty = property;
-    let lastValue = '';
     const preResult = data.reduce((acc, item) => {
-        const [ key, value, type ] = item;
+        const { key, value, status, previousValue, children } = item;
         let thisProperty = '';
         let thisValue = '';
+        let thisPreviousValue = '';
         if (property === '') {
             thisProperty = `${key}`;
         } else {
             thisProperty = `${property}.${key}`;
         }
         if (Array.isArray(value)) {
-            const complexValueCheck = [0, 1, 2]
-            if (complexValueCheck.includes(value[0][2])) {
-                acc.push(style(value, thisProperty));
-                return acc;
-            } else {
-                thisValue = '[complex value]';
-            }
+            thisValue = '[complex value]';
         } else {
             thisValue = typeof value === 'string' ? `'${value}'` : value;
         }
-        if (lastProperty === thisProperty) {
-            acc.pop();
-            acc.push(`Property '${thisProperty}' was updated. From ${lastValue} to ${thisValue}`);
+        if (Array.isArray(previousValue)) {
+            thisPreviousValue = '[complex value]';
+        } else {
+            thisPreviousValue = typeof previousValue === 'string' ? `'${previousValue}'` : previousValue;
+        }
+        if (Array.isArray(children)) {
+            acc.push(style(children, thisProperty));
             return acc;
         }
-        lastProperty = thisProperty;
-        lastValue = thisValue;
-        switch (type) {
-            case 1:
+        switch (status) {
+            case 'removed':
                 acc.push(`Property '${thisProperty}' was removed`);
                 return acc;
-            case 2:
+            case 'added':
                 acc.push(`Property '${thisProperty}' was added with value: ${thisValue}`);
+                return acc;
+            case 'updated':
+                acc.push(`Property '${thisProperty}' was updated. From ${thisPreviousValue} to ${thisValue}`);
                 return acc;
             default:
                 return acc;
