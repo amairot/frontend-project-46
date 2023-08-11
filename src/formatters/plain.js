@@ -1,38 +1,25 @@
 const style = (data, property) => {
     const preResult = data.reduce((acc, item) => {
         const { key, value, status, previousValue, children } = item;
-        let thisProperty = '';
-        let thisValue = '';
-        let thisPreviousValue = '';
-        if (property === '') {
-            thisProperty = `${key}`;
-        } else {
-            thisProperty = `${property}.${key}`;
-        }
-        if (Array.isArray(value)) {
-            thisValue = '[complex value]';
-        } else {
-            thisValue = typeof value === 'string' ? `'${value}'` : value;
-        }
-        if (Array.isArray(previousValue)) {
-            thisPreviousValue = '[complex value]';
-        } else {
-            thisPreviousValue = typeof previousValue === 'string' ? `'${previousValue}'` : previousValue;
-        }
+        const thisItem = [value, previousValue];
+        const [thisValue, thisPreviousValue] = thisItem.map((val) => {
+            if (Array.isArray(val)) {
+                return '[complex value]';
+            } else {
+                return typeof val === 'string' ? `'${val}'` : val;
+            }
+        });
+        const thisProperty = property === '' ? `${key}` : `${property}.${key}`;
         if (Array.isArray(children)) {
-            acc.push(style(children, thisProperty));
-            return acc;
+            return [...acc, style(children, thisProperty)];
         }
         switch (status) {
             case 'removed':
-                acc.push(`Property '${thisProperty}' was removed`);
-                return acc;
+                return [...acc, `Property '${thisProperty}' was removed`];
             case 'added':
-                acc.push(`Property '${thisProperty}' was added with value: ${thisValue}`);
-                return acc;
+                return [...acc, `Property '${thisProperty}' was added with value: ${thisValue}`];
             case 'updated':
-                acc.push(`Property '${thisProperty}' was updated. From ${thisPreviousValue} to ${thisValue}`);
-                return acc;
+                return [...acc, `Property '${thisProperty}' was updated. From ${thisPreviousValue} to ${thisValue}`];
             default:
                 return acc;
         }
