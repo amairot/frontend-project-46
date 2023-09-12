@@ -1,6 +1,5 @@
 import * as fs from 'node:fs';
 import path from 'node:path';
-import _ from 'lodash';
 import findDiff from './finddiff.js';
 import parseFile from './parsers.js';
 import makePath from './makepath.js';
